@@ -1,0 +1,54 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: topolvm
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: topolvm
+      version: 17.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: topolvm
+      interval: 1h
+  values:
+    controller:
+      replicaCount: 1
+      nodeSelector:
+        kubernetes.io/hostname: vie10
+    node:
+      nodeSelector:
+        kubernetes.io/hostname: vie10
+    lvmd:
+      nodeSelector:
+        kubernetes.io/hostname: vie10
+      deviceClasses:
+        - name: local
+          volume-group: vg_topolvm
+          default: true
+          spare-gb: 10
+      env:
+        - name: LVM_SYSTEM_DIR
+          value: /tmp
+    snapshot:
+      enabled: false
+    storageClasses:
+      - name: topolvm
+        storageClass:
+          fsType: xfs
+          reclaimPolicy: Retain
+          isDefaultClass: false
+          volumeBindingMode: WaitForFirstConsumer
+          allowVolumeExpansion: true
+      - name: topolvm-cache
+        storageClass:
+          fsType: xfs
+          reclaimPolicy: Delete
+          isDefaultClass: false
+          volumeBindingMode: WaitForFirstConsumer
+          allowVolumeExpansion: true
+    webhook:
+      podMutatingWebhook:
+        enabled: false
