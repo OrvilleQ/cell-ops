@@ -13,6 +13,11 @@
   },
   packageRules: [
     {
+      description: "Keep Kubernetes on 1.36.x",
+      matchPackageNames: ["ghcr.io/siderolabs/kubelet"],
+      allowedVersions: "/^v?1\\.36\\./",
+    },
+    {
       description: "Auto-merge GitHub Actions non-major updates",
       matchManagers: ["github-actions"],
       matchUpdateTypes: ["minor", "patch", "digest"],
