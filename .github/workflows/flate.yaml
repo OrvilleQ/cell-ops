@@ -3,6 +3,10 @@
 name: "Flate"
 
 on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -22,13 +26,20 @@ jobs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
       - name: Get Changed Files
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         id: changed-files
         uses: bjw-s-labs/action-changed-files@147be9638332cf68fd60714a610509d7a9360d60 # v0.7.0
         with:
-          patterns: kubernetes/**/*
+          include_deleted_files: true
+          patterns: |
+            kubernetes/**/*
+            bootstrap/**/*
+            talos/topf.yaml
+            .mise/**/*
+            .github/workflows/flate.yaml
 
   flate:
-    if: ${{ needs.filter.outputs.changed-files != '[]' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.filter.outputs.changed-files != '[]' }}
     needs: filter
     name: Flate
     runs-on: ubuntu-latest
@@ -39,16 +50,31 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Setup mise tools
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          install_args: helm helmfile kustomize yq lefthook
+
+      - name: Build repository entry point
+        run: kustomize build kubernetes/apps > "$RUNNER_TEMP/cell-apps.yaml"
+
       - name: Install Flate
         uses: home-operations/flate/action@631b76b69c4e58c6f4d1cb01e23616fa61aebafa # v0.6.5
 
       - name: Run Flate
         id: flate
-        run: flate test all -p ./kubernetes/flux/cluster
+        run: |
+          KUBE_VERSION="$(yq -r '.kubernetesVersion' talos/topf.yaml)"
+          flate test all -p ./kubernetes/apps --kube-version "$KUBE_VERSION"
+
+      - name: Render bootstrap releases
+        run: |
+          KUBE_VERSION="$(yq -r '.kubernetesVersion' talos/topf.yaml)"
+          helmfile --file bootstrap/helmfile/apps.yaml template --kube-version "$KUBE_VERSION" > "$RUNNER_TEMP/cell-bootstrap.yaml"
 
   success:
     if: ${{ !cancelled() }}
-    needs: flate
+    needs: [filter, flate]
     name: Flate - Success
     runs-on: ubuntu-latest
     steps:
