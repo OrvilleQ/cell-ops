@@ -13,7 +13,7 @@ talos: talos-secret talos-apply talos-talosconfig talos-kubeconfig
 
 [doc('Bootstrap apps into the Talos cluster')]
 [group('bootstrap')]
-apps: apps-ready apps-namespaces apps-secrets apps-crds apps-helm
+apps: apps-ready apps-namespaces apps-secrets apps-helm
     just log info "Cluster is bootstrapped — Flux will start syncing the Git repository"
 
 # No sops call or existence guard is needed: the bundle is stored already
@@ -44,13 +44,6 @@ talos-talosconfig:
 talos-kubeconfig:
     just log info "Fetching kubeconfig" stage "{{ recipe_name() }}"
     topf kubeconfig --validity 8760h > "{{ justfile_dir() }}/kubeconfig"
-
-[private]
-apps-crds:
-    just log info "Applying CRDs" stage "{{ recipe_name() }}"
-    if ! helmfile --file "{{ source_directory() }}/helmfile/crds.yaml" template --quiet | yq eval-all --exit-status 'select(.kind == "CustomResourceDefinition")' | kubectl apply --server-side --force-conflicts --filename -; then
-        just log fatal "Failed to apply crds"
-    fi
 
 [private]
 apps-helm:
