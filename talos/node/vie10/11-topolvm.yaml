@@ -1,0 +1,15 @@
+apiVersion: v1alpha1
+kind: RawVolumeConfig
+name: topolvm
+provisioning:
+  diskSelector:
+    match: disk.dev_path == '/dev/vda'
+  minSize: 1GiB
+  grow: true
+---
+apiVersion: v1alpha1
+kind: LVMVolumeGroupConfig
+name: vg_topolvm
+provisioning:
+  volumeSelector:
+    match: volume.partition_label == 'r-topolvm'
