@@ -1,0 +1,13 @@
+helmDefaults:
+  cleanupOnFail: true
+  forceConflicts: true
+  wait: true
+  waitForJobs: true
+  timeout: 600
+bases:
+  - default.yaml
+releases:
+  - name: flux-operator
+    namespace: flux-system
+    inherit:
+      - template: default
