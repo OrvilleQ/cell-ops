@@ -1,0 +1,10 @@
+clusterName: cell
+clusterEndpoint: https://100.119.239.63:6443
+talosVersion: v1.14.4
+kubernetesVersion: 1.36.5
+schematicId: "@schematic.yaml"
+secretsPath: secrets.sops.yaml
+nodes:
+  - host: vie10
+    ip: 100.119.239.63
+    role: control-plane

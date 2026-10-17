@@ -1,0 +1,12 @@
+cluster:
+  etcd:
+    advertisedSubnets:
+      - 100.64.0.0/10
+    listenSubnets:
+      - 100.64.0.0/10
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+taints:
+  node-role.kubernetes.io/control-plane:
+    $patch: delete
