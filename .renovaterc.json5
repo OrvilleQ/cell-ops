@@ -1,11 +1,23 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["github>home-operations/renovate-presets#8.1.0"],
+  extends: [
+    "github>home-operations/renovate-presets#8.1.0",
+    "github>home-operations/renovate-presets//apps/talosFactory.json5#8.1.0",
+  ],
+  automergeType: "pr",
+  timezone: "Asia/Shanghai",
+  ignorePaths: ["template/**", ".github/template-tests/**"],
   schedule: ["every weekend"],
   mise: {
     managerFilePatterns: ["/^\\.mise/conf\\.d/[^/]+\\.toml$/"],
   },
   packageRules: [
+    {
+      description: "Auto-merge GitHub Actions non-major updates",
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      automerge: true,
+    },
     {
       description: "GitHub Actions Group",
       matchManagers: ["github-actions"],
