@@ -1,0 +1,22 @@
+helmDefaults:
+  cleanupOnFail: true
+  forceConflicts: true
+  wait: true
+  waitForJobs: true
+  timeout: 600
+
+bases:
+  - default.yaml
+
+releases:
+  - name: cilium
+    namespace: kube-system
+    inherit:
+      - template: default
+
+  - name: coredns
+    namespace: kube-system
+    inherit:
+      - template: default
+    needs:
+      - kube-system/cilium

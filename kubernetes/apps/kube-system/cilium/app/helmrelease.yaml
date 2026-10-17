@@ -1,0 +1,70 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cilium
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: cilium
+  interval: 1h
+  values:
+    ipam:
+      mode: kubernetes
+
+    kubeProxyReplacement: true
+    k8sServiceHost: 127.0.0.1
+    k8sServicePort: 7445
+
+    routingMode: tunnel
+    tunnelProtocol: vxlan
+    MTU: 1280
+    autoDirectNodeRoutes: false
+
+    ipv4:
+      enabled: true
+    ipv6:
+      enabled: false
+
+    bpf:
+      masquerade: false
+      hostLegacyRouting: true
+
+    socketLB:
+      enabled: true
+
+    cgroup:
+      autoMount:
+        enabled: false
+      hostRoot: /sys/fs/cgroup
+
+    securityContext:
+      capabilities:
+        ciliumAgent:
+          - CHOWN
+          - KILL
+          - NET_ADMIN
+          - NET_RAW
+          - IPC_LOCK
+          - SYS_ADMIN
+          - SYS_RESOURCE
+          - DAC_OVERRIDE
+          - FOWNER
+          - SETGID
+          - SETUID
+        cleanCiliumState:
+          - NET_ADMIN
+          - SYS_ADMIN
+          - SYS_RESOURCE
+
+    operator:
+      replicas: 1
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+
+    l7Proxy: false
+    envoy:
+      enabled: false
+    hubble:
+      enabled: false
+
+    rollOutCiliumPods: true
