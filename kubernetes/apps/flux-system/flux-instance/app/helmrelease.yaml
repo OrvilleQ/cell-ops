@@ -1,0 +1,49 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: flux-instance
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: flux-instance
+  interval: 1h
+  values:
+    instance:
+      distribution:
+        # renovate: datasource=github-releases depName=fluxcd/flux2
+        version: "2.9.6"
+      cluster:
+        size: small
+        networkPolicy: false
+      components:
+        - source-controller
+        - kustomize-controller
+        - helm-controller
+        - notification-controller
+      sync:
+        name: flux-system
+        kind: GitRepository
+        url: https://github.com/OrvilleQ/cell-ops.git
+        ref: refs/heads/main
+        path: kubernetes/apps
+      kustomize:
+        patches:
+          - target:
+              kind: Deployment
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: all
+              spec:
+                template:
+                  spec:
+                    nodeSelector:
+                      node-role.kubernetes.io/control-plane: ""
+          - target:
+              kind: Deployment
+              name: kustomize-controller
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --sops-age-secret=sops-age

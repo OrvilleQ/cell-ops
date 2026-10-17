@@ -74,20 +74,8 @@ apps-namespaces:
 
 [private]
 apps-secrets:
-    just log info "Applying secrets for apps" stage "{{ recipe_name() }}"
-    for secret in \
-        "{{ source_directory() }}/deploy-key.sops.yaml" \
-        "{{ source_directory() }}/sops-age.sops.yaml" \
-        "{{ kubernetes_dir }}/components/sops/cluster-secrets.sops.yaml"
-    do
-        name="$(basename "$secret" .sops.yaml)"
-        if sops decrypt "$secret" \
-                | kubectl --namespace flux-system apply --server-side --filename - &>/dev/null; then
-            just log info "Secret applied" resource "$name"
-        else
-            just log fatal "Failed to apply secret" resource "$name"
-        fi
-    done
+    just log info "Applying SOPS age secret" stage "{{ recipe_name() }}"
+    sops decrypt "{{ source_directory() }}/sops-age.sops.yaml" | kubectl --namespace flux-system apply --server-side --filename -
 
 # Wait until nodes register as Ready=False. They only become Ready=True once the CNI is healthy.
 [private]
