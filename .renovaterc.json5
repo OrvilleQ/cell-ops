@@ -12,6 +12,13 @@
   },
   packageRules: [
     {
+      description: "Update Envoy controller and CRDs together",
+      groupName: "envoy-gateway",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/(^|/)envoyproxy/gateway-(crds-)?helm$/"],
+      minimumGroupSize: 2,
+    },
+    {
       description: "Keep Kubernetes on 1.36.x",
       matchPackageNames: ["ghcr.io/siderolabs/kubelet"],
       allowedVersions: "/^v?1\\.36\\./",

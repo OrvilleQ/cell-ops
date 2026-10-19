@@ -5,7 +5,7 @@ resources:
   - ./flux-system
   - ./topolvm-system
   - ./juicefs-system
-  - ./nginx-gateway
   - ./cert-manager
   - ./talos-backup
   - ./kopiur-system
+  - ./envoy-gateway-system

@@ -1,0 +1,26 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: public-http
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: http
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: https
+  clientIPDetection:
+    xForwardedFor:
+      numTrustedHops: 0
+  headers:
+    earlyRequestHeaders:
+      remove:
+        - x-forwarded-for
+        - x-real-ip
+        - forwarded
+        - x-envoy-external-address
+        - x-forwarded-proto
+        - x-forwarded-host

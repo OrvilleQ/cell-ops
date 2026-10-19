@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: envoy-gateway
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: envoy-gateway
+  values:
+    crds:
+      enabled: false
+    deployment:
+      replicas: 1
+      pod:
+        nodeSelector:
+          workload-role: compute
+      envoyGateway:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 768Mi
+    certgen:
+      job:
+        nodeSelector:
+          workload-role: compute

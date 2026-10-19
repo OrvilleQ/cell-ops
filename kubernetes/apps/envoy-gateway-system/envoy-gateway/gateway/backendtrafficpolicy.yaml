@@ -1,0 +1,44 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: public-tcp
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: ssh
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: smtp
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: pop3
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: imap
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: submissions
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: submission
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: imaps
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: pop3s
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: public
+      sectionName: sieve
+  proxyProtocol:
+    version: V2
