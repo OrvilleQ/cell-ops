@@ -16,7 +16,6 @@ spec:
   targetNamespace: cert-manager
   dependsOn:
     - name: gateway-api
-    - name: gvisor
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
