@@ -7,3 +7,4 @@ resources:
   - ./juicefs-system
   - ./nginx-gateway
   - ./cert-manager
+  - ./talos-backup
