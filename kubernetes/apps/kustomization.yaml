@@ -6,3 +6,4 @@ resources:
   - ./topolvm-system
   - ./juicefs-system
   - ./nginx-gateway
+  - ./cert-manager
