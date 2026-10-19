@@ -10,6 +10,8 @@ kind: KubeNodeConfig
 nodeIP:
   validSubnets:
     - 100.64.0.0/10
+labels:
+  workload-role: compute
 ---
 apiVersion: v1alpha1
 kind: KubeFlannelCNIConfig
