@@ -1,4 +1,18 @@
 {
+  customManagers: [
+    {
+      customType: "regex",
+      managerFilePatterns: [
+        "kubernetes/apps/envoy-gateway-system/envoy-gateway/crds/kustomization.yaml",
+      ],
+      matchStrings: [
+        "https://github\\.com/envoyproxy/gateway/releases/download/(?<currentValue>v[0-9.]+)/envoy-gateway-crds\\.yaml",
+      ],
+      datasourceTemplate: "github-releases",
+      depNameTemplate: "envoyproxy/gateway",
+      versioningTemplate: "semver",
+    },
+  ],
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
     "github>home-operations/renovate-presets#8.1.0",
@@ -14,8 +28,9 @@
     {
       description: "Update Envoy controller and CRDs together",
       groupName: "envoy-gateway",
-      matchDatasources: ["docker"],
-      matchPackageNames: ["/(^|/)envoyproxy/gateway-(crds-)?helm$/"],
+      matchDatasources: ["docker", "github-releases"],
+      matchPackageNames: ["/(^|/)envoyproxy/gateway-helm$/", "envoyproxy/gateway"],
+      matchUpdateTypes: ["major", "minor", "patch"],
       minimumGroupSize: 2,
     },
     {
