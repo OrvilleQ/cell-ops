@@ -57,17 +57,3 @@ spec:
               path: /spec/strategy
               value:
                 type: Recreate
-            - op: add
-              path: /spec/template/spec/runtimeClassName
-              value: gvisor
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              group: apps
-              version: v1
-              kind: Deployment
-            patch: |
-              - op: add
-                path: /spec/template/spec/runtimeClassName
-                value: gvisor

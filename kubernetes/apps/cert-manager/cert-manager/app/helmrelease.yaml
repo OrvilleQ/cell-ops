@@ -16,7 +16,6 @@ spec:
       enabled: true
       keep: true
     global:
-      runtimeClassName: gvisor
       nodeSelector:
         workload-role: compute
     replicaCount: 1
@@ -25,8 +24,6 @@ spec:
       kind: ControllerConfiguration
       gatewayAPI:
         enabled: true
-      acmeHTTP01Config:
-        solverRuntimeClassName: gvisor
     dns01RecursiveNameservers: 1.1.1.1:53,1.0.0.1:53
     dns01RecursiveNameserversOnly: true
     extraArgs:
