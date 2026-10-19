@@ -29,6 +29,12 @@ spec:
           volume-group: vg_topolvm
           default: true
           spare-gb: 10
+        - name: thin
+          volume-group: vg_topolvm
+          type: thin
+          thin-pool:
+            name: thinpool
+            overprovision-ratio: 1.0
       env:
         - name: LVM_SYSTEM_DIR
           value: /tmp
@@ -49,6 +55,15 @@ spec:
           isDefaultClass: false
           volumeBindingMode: WaitForFirstConsumer
           allowVolumeExpansion: true
+      - name: topolvm-thin
+        storageClass:
+          fsType: xfs
+          reclaimPolicy: Retain
+          isDefaultClass: false
+          volumeBindingMode: WaitForFirstConsumer
+          allowVolumeExpansion: true
+          additionalParameters:
+            topolvm.io/device-class: thin
     webhook:
       podMutatingWebhook:
         enabled: false
