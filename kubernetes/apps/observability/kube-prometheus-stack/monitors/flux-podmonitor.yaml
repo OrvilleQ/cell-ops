@@ -17,4 +17,3 @@ spec:
           - notification-controller
   podMetricsEndpoints:
     - port: http-prom
-      interval: 60s

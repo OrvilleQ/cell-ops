@@ -12,7 +12,6 @@ spec:
   podMetricsEndpoints:
     - port: prometheus
       path: /metrics
-      interval: 60s
       scrapeTimeout: 10s
       relabelings:
         - sourceLabels:
