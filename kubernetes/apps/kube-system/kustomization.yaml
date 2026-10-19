@@ -8,3 +8,4 @@ resources:
   - ./reloader/ks.yaml
   - ./gvisor/ks.yaml
   - ./snapshot-controller/ks.yaml
+  - ./cloudflare-dns/ks.yaml

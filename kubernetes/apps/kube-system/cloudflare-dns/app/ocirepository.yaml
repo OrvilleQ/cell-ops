@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: cloudflare-dns
+spec:
+  interval: 1h
+  url: oci://ghcr.io/home-operations/charts-mirror/external-dns
+  ref:
+    tag: 1.23.0
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
