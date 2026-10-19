@@ -5,3 +5,4 @@ resources:
   - ./flux-system
   - ./topolvm-system
   - ./juicefs-system
+  - ./nginx-gateway
