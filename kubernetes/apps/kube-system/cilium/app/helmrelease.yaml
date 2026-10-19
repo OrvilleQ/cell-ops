@@ -10,34 +10,27 @@ spec:
   values:
     ipam:
       mode: kubernetes
-
     kubeProxyReplacement: true
     k8sServiceHost: 127.0.0.1
     k8sServicePort: 7445
-
     routingMode: tunnel
     tunnelProtocol: vxlan
     MTU: 1280
     autoDirectNodeRoutes: false
-
     ipv4:
       enabled: true
     ipv6:
       enabled: false
-
     bpf:
       masquerade: false
       hostLegacyRouting: true
-
     socketLB:
       enabled: true
       hostNamespaceOnly: true
-
     cgroup:
       autoMount:
         enabled: false
       hostRoot: /sys/fs/cgroup
-
     securityContext:
       capabilities:
         ciliumAgent:
@@ -56,16 +49,31 @@ spec:
           - NET_ADMIN
           - SYS_ADMIN
           - SYS_RESOURCE
-
     operator:
       replicas: 1
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
-
+      extraArgs:
+        - --operator-prometheus-serve-addr=$(METRICS_NODE_IP):9963
+      extraEnv:
+        - name: METRICS_NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+      prometheus:
+        enabled: true
     l7Proxy: false
     envoy:
       enabled: false
     hubble:
       enabled: false
-
     rollOutCiliumPods: true
+    extraArgs:
+      - --prometheus-serve-addr=$(METRICS_NODE_IP):9962
+    extraEnv:
+      - name: METRICS_NODE_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.hostIP
+    prometheus:
+      enabled: true

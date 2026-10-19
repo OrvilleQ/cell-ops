@@ -2,3 +2,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ./flux-podmonitor.yaml
+  - ./cilium-agent.yaml
+  - ./cilium-operator.yaml
+  - ./cert-manager.yaml
+  - ./envoy-gateway.yaml
+  - ./envoy-proxy.yaml
+  - ./kopiur.yaml
+  - ./topolvm-controller.yaml
+  - ./topolvm-node.yaml
+  - ./topolvm-lvmd.yaml
