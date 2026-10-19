@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kanidm-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kanidm
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: envoy-gateway-system
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-name: public
+      ports:
+        - protocol: TCP
+          port: 8443
+    - from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              kanidm-ldap-client: "true"
+      ports:
+        - protocol: TCP
+          port: 3636

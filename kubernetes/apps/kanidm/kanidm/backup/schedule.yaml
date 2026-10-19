@@ -1,0 +1,14 @@
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotSchedule
+metadata:
+  name: kanidm-daily
+spec:
+  policyRef:
+    name: kanidm
+  schedule:
+    cron: 15 4 * * *
+    timezone: Asia/Tokyo
+    concurrencyPolicy: Forbid
+    runOnCreate: false
+  deletion:
+    onScheduleDelete: Retain

@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kanidm
+  annotations:
+    secret.reloader.stakater.com/reload: kanidm-config,kanidm-tls
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kanidm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kanidm
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        workload-role: compute
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: kanidm
+          image: docker.io/kanidm/server:1.11.2@sha256:e45f00bd354c1fc1c06a4be484b4e87b094c431e78280f1d19e911815e63efb5
+          env:
+            - name: KANIDM_CONFIG
+              value: /config/server.toml
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: https
+              containerPort: 8443
+            - name: ldaps
+              containerPort: 3636
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 1Gi
+          startupProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: https
+              scheme: HTTPS
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: tls
+              mountPath: /tls
+              readOnly: true
+            - name: run
+              mountPath: /run/kanidm
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kanidm-data
+        - name: config
+          secret:
+            secretName: kanidm-config
+            defaultMode: 288
+        - name: tls
+          secret:
+            secretName: kanidm-tls
+            defaultMode: 288
+        - name: run
+          emptyDir:
+            sizeLimit: 16Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

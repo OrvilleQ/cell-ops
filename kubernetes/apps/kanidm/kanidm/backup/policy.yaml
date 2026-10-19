@@ -1,0 +1,26 @@
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: kanidm
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  repository:
+    kind: ClusterRepository
+    name: cell-b2
+  credentialProjection:
+    enabled: true
+  copyMethod: Snapshot
+  volumeSnapshotClassName: topolvm
+  sources:
+    - pvc:
+        name: kanidm-data
+  mover:
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+    podSecurityContext:
+      fsGroup: 1000
+  retention:
+    keepDaily: 14
+    keepWeekly: 8

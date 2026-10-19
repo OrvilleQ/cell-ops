@@ -10,3 +10,4 @@ resources:
   - ./kopiur-system
   - ./envoy-gateway-system
   - ./observability
+  - ./kanidm

@@ -39,6 +39,11 @@
   },
   packageRules: [
     {
+      description: "Review identity server upgrades before applying database migrations",
+      matchPackageNames: ["/(^|/)kanidm/server$/"],
+      automerge: false,
+    },
+    {
       description: "Update monitoring chart and matching CRDs together",
       groupName: "kube-prometheus-stack",
       matchDatasources: ["docker", "github-releases"],

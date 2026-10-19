@@ -17,6 +17,7 @@ spec:
   dependsOn:
     - name: envoy-gateway
     - name: envoy-gateway-certificate
+    - name: kanidm-certificate
   decryption:
     provider: sops
     secretRef:
