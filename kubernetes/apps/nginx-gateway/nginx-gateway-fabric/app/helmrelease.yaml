@@ -1,0 +1,73 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nginx-gateway-fabric
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: nginx-gateway-fabric
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
+  values:
+    nginxGateway:
+      replicas: 1
+      nodeSelector:
+        workload-role: compute
+      productTelemetry:
+        enable: false
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          memory: 512Mi
+    certGenerator:
+      nodeSelector:
+        workload-role: compute
+    nginx:
+      kind: deployment
+      replicas: 1
+      pod:
+        nodeSelector:
+          workload-role: edge
+        tolerations:
+          - key: dedicated
+            operator: Equal
+            value: edge
+            effect: NoSchedule
+      container:
+        hostPorts:
+          - port: 80
+            containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+      service:
+        type: ClusterIP
+      patches:
+        - type: JSONPatch
+          value:
+            - op: add
+              path: /spec/strategy
+              value:
+                type: Recreate
+            - op: add
+              path: /spec/template/spec/runtimeClassName
+              value: gvisor
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+            patch: |
+              - op: add
+                path: /spec/template/spec/runtimeClassName
+                value: gvisor
