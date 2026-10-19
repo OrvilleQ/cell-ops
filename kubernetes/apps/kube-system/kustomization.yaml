@@ -7,3 +7,4 @@ resources:
   - ./metrics-server/ks.yaml
   - ./reloader/ks.yaml
   - ./gvisor/ks.yaml
+  - ./snapshot-controller/ks.yaml

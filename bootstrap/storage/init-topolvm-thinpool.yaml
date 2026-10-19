@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-topolvm-thinpool
+  namespace: topolvm-system
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 600
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: vie10
+      containers:
+        - name: init-pool
+          image: alpine:3.23.6@sha256:85fe1e81d6758c208f3e1eed4338a1997e19d4be002d4dd32d3100c9a8c010a0
+          securityContext:
+            privileged: true
+          env:
+            - name: LVM_SYSTEM_DIR
+              value: /tmp/lvm
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              apk add --no-cache lvm2 lvm2-extra device-mapper thin-provisioning-tools
+              mkdir -p "$LVM_SYSTEM_DIR"
+              cat > "$LVM_SYSTEM_DIR/lvm.conf" <<'CONF'
+              devices { use_devicesfile = 0 }
+              activation { udev_sync = 0 udev_rules = 0 monitoring = 0 }
+              backup { backup = 0 archive = 0 }
+              CONF
+              vgs vg_topolvm --units g -o vg_name,vg_size,vg_free
+              existing=$(lvs --noheadings -o segtype vg_topolvm/thinpool 2>/dev/null | tr -d '[:space:]' || true)
+              if [ -n "$existing" ]; then
+                [ "$existing" = thin-pool ] || { echo 'Existing LV is not a thin pool; refusing.'; exit 1; }
+                echo 'thinpool already exists; leaving it unchanged.'
+              else
+                free=$(vgs --noheadings --units b --nosuffix -o vg_free vg_topolvm | tr -d '[:space:]')
+                # Reserve 320GiB cache + 64GiB pool + 10GiB VG spare + 2GiB metadata allowance.
+                awk -v n="$free" 'BEGIN { exit !(n >= 425201762304) }' || {
+                  echo 'Less than 396GiB free; refusing the planned allocation.'; exit 1;
+                }
+                lvcreate --yes --type thin-pool --size 64G --poolmetadatasize 256M \
+                  --chunksize 256K --name thinpool vg_topolvm
+              fi
+              lvs -a vg_topolvm --units g -o lv_name,segtype,lv_size,pool_lv,data_percent,metadata_percent
+              vgs vg_topolvm --units g -o vg_name,vg_size,vg_free
+          volumeMounts:
+            - name: devices
+              mountPath: /dev
+      volumes:
+        - name: devices
+          hostPath:
+            path: /dev
+            type: Directory

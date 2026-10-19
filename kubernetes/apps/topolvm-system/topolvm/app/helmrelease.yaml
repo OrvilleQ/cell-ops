@@ -1,4 +1,3 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -34,12 +33,12 @@ spec:
           type: thin
           thin-pool:
             name: thinpool
-            overprovision-ratio: 1.0
+            overprovision-ratio: 1
       env:
         - name: LVM_SYSTEM_DIR
           value: /tmp
     snapshot:
-      enabled: false
+      enabled: true
     storageClasses:
       - name: topolvm
         storageClass:
