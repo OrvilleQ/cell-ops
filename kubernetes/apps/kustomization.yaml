@@ -9,3 +9,4 @@ resources:
   - ./talos-backup
   - ./kopiur-system
   - ./envoy-gateway-system
+  - ./observability

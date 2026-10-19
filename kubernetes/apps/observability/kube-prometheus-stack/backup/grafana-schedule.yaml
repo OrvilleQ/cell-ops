@@ -1,0 +1,14 @@
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotSchedule
+metadata:
+  name: grafana-daily
+spec:
+  policyRef:
+    name: grafana
+  schedule:
+    cron: 0 4 * * *
+    timezone: Asia/Tokyo
+    concurrencyPolicy: Forbid
+    runOnCreate: false
+  deletion:
+    onScheduleDelete: Retain

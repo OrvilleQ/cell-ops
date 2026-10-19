@@ -1,0 +1,26 @@
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: grafana
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  repository:
+    kind: ClusterRepository
+    name: cell-b2
+  credentialProjection:
+    enabled: true
+  copyMethod: Snapshot
+  volumeSnapshotClassName: topolvm
+  sources:
+    - pvc:
+        name: grafana-data
+  mover:
+    securityContext:
+      runAsUser: 472
+      runAsGroup: 472
+    podSecurityContext:
+      fsGroup: 472
+  retention:
+    keepDaily: 7
+    keepWeekly: 4

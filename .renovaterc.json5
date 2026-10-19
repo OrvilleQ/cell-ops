@@ -3,6 +3,19 @@
     {
       customType: "regex",
       managerFilePatterns: [
+        "kubernetes/apps/observability/kube-prometheus-stack/crds/kustomization.yaml",
+      ],
+      matchStrings: [
+        "https://raw\\.githubusercontent\\.com/prometheus-community/helm-charts/kube-prometheus-stack-(?<currentValue>[0-9.]+)/",
+      ],
+      datasourceTemplate: "github-releases",
+      depNameTemplate: "prometheus-community/helm-charts",
+      extractVersionTemplate: "^kube-prometheus-stack-(?<version>.+)$",
+      versioningTemplate: "semver",
+    },
+    {
+      customType: "regex",
+      managerFilePatterns: [
         "kubernetes/apps/envoy-gateway-system/envoy-gateway/crds/kustomization.yaml",
       ],
       matchStrings: [
@@ -25,6 +38,17 @@
     managerFilePatterns: ["/^\\.mise/conf\\.d/[^/]+\\.toml$/"],
   },
   packageRules: [
+    {
+      description: "Update monitoring chart and matching CRDs together",
+      groupName: "kube-prometheus-stack",
+      matchDatasources: ["docker", "github-releases"],
+      matchPackageNames: [
+        "ghcr.io/prometheus-community/charts/kube-prometheus-stack",
+        "prometheus-community/helm-charts",
+      ],
+      matchUpdateTypes: ["major", "minor", "patch"],
+      minimumGroupSize: 2,
+    },
     {
       description: "Update Envoy controller and CRDs together",
       groupName: "envoy-gateway",

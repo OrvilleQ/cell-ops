@@ -1,0 +1,165 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+spec:
+  interval: 1h
+  timeout: 15m
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  chartRef:
+    kind: OCIRepository
+    name: kube-prometheus-stack
+  values:
+    fullnameOverride: kube-prometheus-stack
+    crds:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeEtcd:
+      enabled: false
+    kubeProxy:
+      enabled: false
+    defaultRules:
+      rules:
+        etcd: false
+        kubeControllerManager: false
+        kubeProxy: false
+        kubeSchedulerAlerting: false
+        kubeSchedulerRecording: false
+        windows: false
+    prometheusOperator:
+      nodeSelector:
+        workload-role: compute
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 384Mi
+      admissionWebhooks:
+        patch:
+          nodeSelector:
+            workload-role: compute
+    prometheus:
+      prometheusSpec:
+        replicas: 1
+        nodeSelector:
+          workload-role: compute
+        scrapeInterval: 60s
+        evaluationInterval: 60s
+        retention: 7d
+        retentionSize: 10GB
+        walCompression: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            memory: 1536Mi
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: topolvm-thin
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 15Gi
+        persistentVolumeClaimRetentionPolicy:
+          whenDeleted: Retain
+          whenScaled: Retain
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
+    alertmanager:
+      alertmanagerSpec:
+        replicas: 1
+        nodeSelector:
+          workload-role: compute
+        retention: 120h
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            memory: 192Mi
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: topolvm-thin
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
+        persistentVolumeClaimRetentionPolicy:
+          whenDeleted: Retain
+          whenScaled: Retain
+    grafana:
+      fullnameOverride: grafana
+      replicas: 1
+      nodeSelector:
+        workload-role: compute
+      deploymentStrategy:
+        type: Recreate
+      admin:
+        existingSecret: grafana-admin
+        userKey: admin-user
+        passwordKey: admin-password
+      envValueFrom:
+        GF_SECURITY_SECRET_KEY:
+          secretKeyRef:
+            name: grafana-admin
+            key: secret-key
+      persistence:
+        enabled: true
+        type: pvc
+        existingClaim: grafana-data
+      initChownData:
+        enabled: false
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 384Mi
+      sidecar:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+      grafana.ini:
+        analytics:
+          reporting_enabled: false
+          check_for_updates: false
+        users:
+          allow_sign_up: false
+    kube-state-metrics:
+      nodeSelector:
+        workload-role: compute
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          memory: 256Mi
+    prometheus-node-exporter:
+      service:
+        listenOnAllInterfaces: false
+      hostRootFsMount:
+        mountPropagation: None
+      tolerations:
+        - operator: Exists
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          memory: 128Mi
