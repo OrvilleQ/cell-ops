@@ -8,3 +8,4 @@ resources:
   - ./nginx-gateway
   - ./cert-manager
   - ./talos-backup
+  - ./kopiur-system

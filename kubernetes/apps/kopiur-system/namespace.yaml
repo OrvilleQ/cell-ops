@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kopiur-system
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    backup-enabled: "true"
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled

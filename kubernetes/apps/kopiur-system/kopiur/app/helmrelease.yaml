@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kopiur
+spec:
+  interval: 1h
+  timeout: 10m
+  releaseName: kopiur
+  chartRef:
+    kind: OCIRepository
+    name: kopiur
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    fullnameOverride: kopiur
+    installScope: cluster
+    replicaCount: 1
+    global:
+      nodeSelector:
+        workload-role: compute
+    features:
+      credentialProjection:
+        enabled: true
+    webhook:
+      replicaCount: 1
+      tls:
+        mode: self
+    ui:
+      enabled: false
