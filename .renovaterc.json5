@@ -6,7 +6,6 @@
   ],
   automergeType: "pr",
   timezone: "Asia/Shanghai",
-  ignorePaths: ["template/**", ".github/template-tests/**"],
   schedule: ["every weekend"],
   mise: {
     managerFilePatterns: ["/^\\.mise/conf\\.d/[^/]+\\.toml$/"],
