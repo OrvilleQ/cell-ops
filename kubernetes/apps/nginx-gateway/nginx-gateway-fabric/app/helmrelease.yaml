@@ -32,7 +32,7 @@ spec:
       replicas: 1
       pod:
         nodeSelector:
-          workload-role: edge
+          kubernetes.io/hostname: vie10
         tolerations:
           - key: dedicated
             operator: Equal
