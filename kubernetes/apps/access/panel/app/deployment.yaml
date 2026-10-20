@@ -25,15 +25,7 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: kubernetes.io/hostname
-                    operator: In
-                    values:
-                      - vie10
+      affinity: {}
       tolerations:
         - key: dedicated
           operator: Equal
@@ -105,3 +97,5 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 64Mi
+      nodeSelector:
+        workload-role: edge

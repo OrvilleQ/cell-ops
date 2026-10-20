@@ -17,7 +17,7 @@ spec:
           type: Recreate
         pod:
           nodeSelector:
-            kubernetes.io/hostname: vie10
+            workload-role: edge
           tolerations:
             - key: dedicated
               operator: Equal
