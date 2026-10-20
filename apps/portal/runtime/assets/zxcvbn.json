@@ -1,0 +1,7 @@
+{
+  "package": "zxcvbn",
+  "version": "4.4.2",
+  "license": "MIT",
+  "source": "https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js",
+  "sha256": "f42c651f40506acb6b662490f338dd47a5951d3312039c4ab8fe5090484f351a"
+}
