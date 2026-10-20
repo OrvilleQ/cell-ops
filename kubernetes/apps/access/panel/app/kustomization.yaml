@@ -5,3 +5,7 @@ resources:
   - ./deployment.yaml
   - ./service.yaml
   - ./networkpolicy.yaml
+  - ./certificate.sops.yaml
+  - ./referencegrant.yaml
+  - ./route.sops.yaml
+  - ./redirect.sops.yaml

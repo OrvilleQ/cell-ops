@@ -1,0 +1,74 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: panel
+  namespace: access
+spec:
+  parentRefs:
+    - name: ENC[AES256_GCM,data:8q3B+v7q,iv:NWq54EhyaKMVzevheQzrK36VF1uR+npVg1F/m/7u8j8=,tag:GWnarDbeXV4qZc/x91Nl+A==,type:str]
+      namespace: ENC[AES256_GCM,data:C5IaYQx0owLeCJdMUSra/FMzjAs=,iv:m70z7JEWmGogwqCa6xmRkatoYb1wLnRwwl+PRjXip0Q=,tag:4oUT9IJits0X7qXH/2ZSbw==,type:str]
+      sectionName: ENC[AES256_GCM,data:Lur500Y=,iv:HGx5aLVCxDnxEWHGQXDLdIQCO+UdizXfkD+Y8+56BMA=,tag:IiWGvtBHpifzM0qmXBszeg==,type:str]
+  hostnames:
+    - ENC[AES256_GCM,data:RXPtac7axc+MTV/cDJC/fr/Y,iv:tw7VZBNs2wWYcp3iHD4QYDRlcfRIBE+Ggw8CLCi4lhs=,tag:Mpp2z6m9JlXNWxqjnOLd/Q==,type:str]
+  rules:
+    - matches:
+        - path:
+            type: ENC[AES256_GCM,data:sOsQyL+B4+8Vow==,iv:5uPYbGqp8yYftsC/Vj7UO3x/MMllNm0BFuY3jrp8WEg=,tag:HyTShTl8j1K43ltiv8eGKg==,type:str]
+            value: ENC[AES256_GCM,data:7+7K9rY3v8eX5u0Hw78Y+3tAr0QOw+YL4GCr1n4FXfh6rD5N3SQ=,iv:SsAzbOijdsOddM8iOB0G3ezPvEucccBHLO/HGKp9Grk=,tag:TcLngCw/wAq3ayFtox0neA==,type:str]
+      backendRefs:
+        - name: ENC[AES256_GCM,data:8o1Js60=,iv:lzFc3OyrWftHd9ib4RtVixm8ZPAaNKEMuJdALz3I8kk=,tag:hHmwFXohac0yW5ckWcBW7Q==,type:str]
+          port: ENC[AES256_GCM,data:qWohVQ==,iv:ABdbKReQn/KJ5FIeHZ0rtlNtiVkRoPqq+FwGgzRRJIU=,tag:TJnGSDE89waYZMqLdOeH3g==,type:int]
+    - matches:
+        - path:
+            type: ENC[AES256_GCM,data:GaNQogPJChtdaA==,iv:GXWh8PhjwQBLu4d3LrBbPntlu6ehhkyQT39iHlFZMBo=,tag:7zkEM0oHj3vIa5GvdufOsA==,type:str]
+            value: ENC[AES256_GCM,data:4y7VqC1RqE3Q1XHuI2J2EejW1J4HBGHg4SdXkcwGQs1upbvDeJY=,iv:XOdYaog+sOL6+DJehOKFK3MyCPBFNOh6KxHXvFsJMu0=,tag:/c6D3/izLCAVQ27VKuZOSA==,type:str]
+      backendRefs:
+        - name: ENC[AES256_GCM,data:Js79vzM=,iv:mb2PsTnnjciQ3LnXh8r5bJf9xUcGhZxDLYIRK3DfHKg=,tag:J/OrT5mxBTn4kpFYcsawXw==,type:str]
+          port: ENC[AES256_GCM,data:mhA09A==,iv:11jApPWuu4Y9z9Jl8uLNxGvXgkJy/D491TshvSZo7UQ=,tag:hDqr4dZ1xTTs/uQnxrLRyA==,type:int]
+sops:
+  age:
+    - enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IG1sa2VtNzY4eDI1NTE5IG1Ga3EweUlM
+        V3FUZGRIRi9pakphM0d1Z0IrWmtOQ1B3TmZOKzJhSVhad3FpbWdBWmRYemlMbVVn
+        TG1WY2pOR0Y3ZW9sUWZnMGZYRFNZYnkvV3g1Yy9NeWU3eXVKUmRYY3ZNR1hqYmpu
+        Qk9UUWlWVHVMNlpSMDltazI4UmVwcXNHbzA0WmRtTlJROXBkZEhJMjltbUJBdWJB
+        WnY4blE5dEpSUDNpb3BOTVBqbXZ3bHR4eExod2hVd2xtQ3BNUGdOT1lBaGxHSEU0
+        ZUcrajAvdGxhTURRN2NGVkYwNWVXTzlVeTlMdC9kck1WWlZpdnRiZ2szQThSSHdT
+        Y08xR1c1OXVGdUJUOWQrclJvUFppTGN2emJXOENGVU9Za0VyOW9SbU5VRzMwN1JC
+        NWd5WktmZEwyZU9jVnA1Ty90Q0djcUhYQ2ZET0VtOUs5OEhmT2dmMDNVOXNtazZx
+        cHNzT0tYZTgvYU1RZlhKYlJFS3hCVHdNNkFCVlpjdmFvZTFuOUJ5a3dGS2xXcmhh
+        S1I1UW9IcjNLMWppSXNCbEZaS3BjOEpjVXp2cFNKcUV0UVF5eS9lMjYvS3Z4SlU3
+        Vlh1cU9meURVTi9yTEpWVFFQbEpCSFh6VUZxVFVDcVVQRFFsUmJvdUZSTjIyZ2Fa
+        Zjkrbk9PNnZPNm5PMDlzdUNVV3N5eGY4eW1ad3ZKWk9pMTh3bW5MQTRCU1RQcVVJ
+        NzcxMHVhUTBrbUtsUllPV29QcVBkcjZuTlFXdUZYODBRNEpQY014K044dmpWODlm
+        RkFhaDRNRDRRMHRYV1VjT2VmbFVVNHg2N01QUkx6R3QrcjRGaG9jVFBCQWJucU5D
+        WWx4R1pHaGdITzJjdzFNMlI0OThUZnh4cXZRT290VVNkellPejJ5akpOVVhhZ1pZ
+        OWZkVWpEUkV0dXVGcnJMbC9odGw4dnN2THpwSnNYK3p6bStkc0hmMlIwOGRRN2lL
+        eHJaNFRZWVRoZVFPdGhZV0xXRGhCQU9FZlVhWk9lYmNIdTBmZ2c0RkRYTDAzd25W
+        UTJ5dmIrR2ZGS3k3THRxbTVCT0tibmFPaElobVk4UjdrSkpxZjNqeGFvb3BRVzVo
+        OU9MQVhZY1NjejRVVm9qMmhaOGpPVzlZeUt3MnFNMEhaWlZIMWlzSVZVYlFHQU1p
+        bUhTclpHNDJIYWtRNm5hKzB1dWZxYXdXUW1iYmpTdENNWTZUc0UvOE1RL0IyVkhz
+        Z3hxRDNYRnEraVdReElibWVnYmRFdjZOYnZqRW9xT2lod3hYTTRFd2N5WmQxTjFl
+        M2RqRmdIWVFtY1B3YVlieW1ib045MTZhNU9BeGNXb3RFTkkzS2w4UTV3UEx0cmtR
+        cUZTc25ROHF2aU1saXIvUDRFK2hSeTRVNWR3MlZiNnlVZWFPM0IybUJRdlBYb3RK
+        aFhXeVJ6L3pzbWkydVJjNHJsVlhGV2N5UDBSZFBmTUdIZnduZmNTU2daSWdDR0V5
+        cTNsbEpRVlVJQzZneEMwSFFEOG9EK3g5c0lqWG5QS2tRelZXdWZUMVBFNzA0ME1r
+        UmdRMjU1YXRZZ2N1SXZ5WnhKZ2s2VE80cDVINkZOVnc5aHQvb2ZNSkpNcDBzaGNS
+        SVk3aGU4a0NGOGpaa2k4RFBwYnNzeXJ1dE50Rjh1ZmI1aEVkdDNyZnR5RU9uNG5l
+        TkdhL3c1bzV1WGs0K2JvSXNVSEV2TFcraE9heFdTMzFkU2s5NE1iMnMyTnoxNVFa
+        Ukp2ZU1YbWEraWp6MmJmM2hRTFdXeEVKV0MyZmtKUEtpeXdISWZMN0RQUGZSODlr
+        L1lLS0R0c1IyejdUVlpHWGZXbGJuQlBjcTl1dk5waHVTalFId0w2TVd2Rmh0cjVC
+        cnpNY3ZTK1Z5a1pJaFE3MmZWeUtZUUJNMDJPa3dFR0VidkI5REVOazBaWTFKT2JR
+        QlBBVnUvK2htUkRlamMrT2NSZ2Y2UGJmWXBodm1OTG1DOUdaRDNuNitHNGdZQQpF
+        ZlUxUkRpOVdEQzY0V0RQRDRzcjQybTcxbGszYWN4K3JtNk1sSGFLRDg0Ci0tLSAr
+        djBjMEhoMlJkVWNacUFzeUMzTmcvYm9jOEZRak44RW1wdFcyVzdkMGhzCqtCBcGN
+        euFQlZOHRO7KIUFftxpC1/d0+7BB9ri4/t3Ckos44qDmwrveUKh8eO5R35/FcEEH
+        uKp3kbnlmZdGoB0=
+        -----END AGE ENCRYPTED FILE-----
+      recipient: age1pq1km7fvrwkz9jf2tw3k4v86z67qz9qkgrm2vxe4g8wxcgc8j6mm0trpd5mvgy7qwk9v6vx8xjrwls9yl4jg9dzrpummyr5j42ctlmxwc954epnhnntkfxy26c8pyux2pmkrwdjx5tx9dx5wvp8dhg3gqusgyjuzvvm278lka5xmqpxajvg4ynn8d5p759n5spa9w6hazmkw4g742eghjv8l6tak6aqnw3e3takj552xknp3fnnftfuukce84k7tqtghywf7cfs4vmukm462kr0kt96nyflamyrzsrpr8wcxv0wqrznrygprjn327qr6wfq58h2vuaqa9av4j6fpmce5ytgvesjvvjj6q225agus7jq6h7c98ysvhwwx6565j9dkvwz4ch4qmzvyzy6mx7xqyz5fz5eulaf5v4mrjt322nu4suw2n78ekdfpvk0wsyrkf2937zlywe3gjh4wpxgz0gds2x0gqrs8zn9xtlsnf23qxkjyyvuxvehhws50h38t8js5ccw2srz3c3a7qsp6qfz4zd98y4ge9gf7mxz8mu8vssqxgzcv9awfslgk5za2ra5t0vv3z9spjm4jeztjdgm92vrlly5kkaxzkalntpsqk6m56uuwp260h0zzgzevfcah5xw8revkxxzqf5l2h3ucs2kh9u7k87t4vls3kp4yhkqadhjv3f0pt9tmmdcpekl5vx95clf84prtkqc3um69m9n9vj523cz4ccm4awg0vwmzf984wdls2entkmnqddxsx6gspxdhwmrx73g7szqmk9vwrt403d6cll380qtne22n7gm28zyjdp5kv3zckp2ejvfqngrqp45ndsrpgsf0vlmawj9w6yv9elnzlsnwq4nqvx6cccf92dtycesj2jgw3zg9zg4h7e948rtawyy2xn230fazk2p9rpk0w25kly4dckl3tqm5gdyh9rv5l9pzu9xp2zfqcpllx6xnddszgyvmaut20u2psurza8zn9q5nlgzara5he9j9qphfsgwqdc2spw8j3kkzjxl0sz4f9vxreg29sas6mesyny4kx729jxetpa3mgejgxlspm2uqsgd5zqjsefjndmf2wzkzdy50y3fqyf369rdtytptgz6k2xvewg2nj3j4zufg0gxn95mqnkl28vgk2kef09vh7pvfzyqys5wwapvxq5wfekxvlan7cgtryptyc636mrlgpqt4estkhyqkx06wvsyfszfmv6uhr35ez0v88dv4jhfgrxvd4rkvpdyc9lpx5xtshfmlg0m4zyrnf3h9ggt4phyxzuz3qu46vz5qpvn4s64rcuyf30t52mw9g3skzt69fz5ycf3ntdaltyqcfze03rg0c460paxkmku6smc7qngpj65mjs3yq9msgc7fw7gfv49hwnudajhenf83glq5eqz5xt4ghq6grcxhde7h04t03l8yxfass6gergc0lzcyvhlsus46zuvfdnq804swx3kg9xt4plf8xnda83z8w3mpl72sdaecvdht6jjrh99u7pu3f89yflknyk5kzyht36e57q3hds3vj74fqstkju5jh5xc756fmerd0fsp2tqgrzf7w3k4mt2xzvdngl2vd2h6et6uj39ns024drjppdja23gnet6yhq3crdcs4vx580ugs0p0z6x9l9uam9ywh95gjd2mqcf7d4vshd68rdyzln44j4dddeshenxwdces9q4e3spc03hcvv8yuzg4e55dd8e0jm7ervkcay7ds4nhh62v5x4hgapz9fyhznvj6sxy8ghm49fd6uacye792fcckgrhkyrlxupzh7czr057vvgd4spazq7555getkwyv0jenpfjpt8fehcpumh5z5qltufarcuundffkw2q02mnz5mketcvs2td83rqdm5d3nglr0w6xr2hr3kqp4v0v5uv6wr
+  encrypted_regex: ^(spec)$
+  lastmodified: "2026-10-20T03:22:09Z"
+  mac: ENC[AES256_GCM,data:TvYtf3izqzIzsSn4rLmgrbemO9WVX0YB+Gdb4oN46OfM70+vIQBaUDY63/JLDAD7oMjgAxrIrr39ZidoxA+eHzbZM64WF/JIIXi+2BAmL9WogdXBudG7W5mirFvydQigvHUe9Pykt6vNuLRNsmrrkjxB8u7Z5/J3GnSZaAGy4ew=,iv:o5IPhwm/zyoX4x9QSeWOF+/CB48aCAurklW+UPFihpw=,tag:TI6GfjwTrEEKqsnlQbwmMg==,type:str]
+  mac_only_encrypted: true
+  version: 3.13.3
