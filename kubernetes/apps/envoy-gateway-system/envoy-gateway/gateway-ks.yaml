@@ -18,6 +18,7 @@ spec:
     - name: envoy-gateway
     - name: envoy-gateway-certificate
     - name: kanidm-certificate
+    - name: portal-certificate
   decryption:
     provider: sops
     secretRef:
