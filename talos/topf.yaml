@@ -11,3 +11,4 @@ nodes:
     role: control-plane
   - host: losce
     role: worker
+    ip: 100.93.138.80
