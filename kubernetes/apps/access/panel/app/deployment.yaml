@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: panel
+        kanidm-ldap-client: "true"
     spec:
       automountServiceAccountToken: false
       securityContext:
