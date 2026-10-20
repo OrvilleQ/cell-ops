@@ -1,0 +1,53 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: access-panel-vars
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/access/panel/variables
+  targetNamespace: flux-system
+  prune: true
+  wait: false
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: access-panel
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/access/panel/app
+  targetNamespace: access
+  prune: true
+  wait: false
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  dependsOn:
+    - name: access-panel-vars
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: panel-vars
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: panel
+      namespace: access

@@ -11,3 +11,4 @@ resources:
   - ./envoy-gateway-system
   - ./observability
   - ./kanidm
+  - ./access
