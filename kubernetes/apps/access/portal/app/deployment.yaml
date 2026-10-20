@@ -34,6 +34,8 @@ spec:
           env:
             - name: PORTAL_CONFIG
               value: /config/config.json
+            - name: GUNICORN_CMD_ARGS
+              value: "--no-control-socket"
           ports:
             - name: http
               containerPort: 8080
