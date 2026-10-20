@@ -18,7 +18,7 @@ spec:
         kanidm-ldap-client: "true"
     spec:
       nodeSelector:
-        workload-role: compute
+        workload-role: edge
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 20
       securityContext:
@@ -88,3 +88,8 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 32Mi
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: edge
+          effect: NoSchedule
