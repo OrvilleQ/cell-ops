@@ -3,4 +3,4 @@ kind: KubeNodeConfig
 labels:
   workload-role: edge
 taints:
-  dedicated: "edge:NoSchedule"
+  dedicated: edge:NoSchedule

@@ -9,3 +9,5 @@ nodes:
   - host: vie10
     ip: 100.119.239.63
     role: control-plane
+  - host: losce
+    role: worker
