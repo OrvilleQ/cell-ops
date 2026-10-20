@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: talk-overlay
+data:
+  config.js: |
+    'use strict';
+    const c = require('./config.template.js');
+    c.webrtc.turn.url = JSON.parse(process.env.TURN_URLS);
+    module.exports = c;

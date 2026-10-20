@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mirotalk
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mirotalk
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mirotalk
+      annotations:
+        config.digest: ae9fddac133f728cda2e30335cc8c7f893775545784da92f26369c400e467af6
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        workload-role: edge
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: edge
+          effect: NoSchedule
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mirotalk
+          image: docker.io/mirotalk/p2p:latest@sha256:f6ec89b41b81e54c6b05a31780b6712959b7db03456eabaad19d703c57ba9718
+          command:
+            - node
+            - app/src/server.js
+          envFrom:
+            - secretRef:
+                name: talk-config
+          ports:
+            - name: http
+              containerPort: 3000
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: overlay
+              mountPath: /src/app/src/config.js
+              subPath: config.js
+              readOnly: true
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 3
+            failureThreshold: 40
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 15
+            failureThreshold: 4
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 32Mi
+        - name: overlay
+          configMap:
+            name: talk-overlay
+      terminationGracePeriodSeconds: 30
