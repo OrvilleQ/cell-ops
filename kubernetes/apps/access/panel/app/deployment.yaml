@@ -74,6 +74,9 @@ spec:
               containerPort: 8080
             - name: aux
               containerPort: 8081
+            - name: stream
+              containerPort: 8082
+              protocol: TCP
           startupProbe:
             tcpSocket:
               port: http

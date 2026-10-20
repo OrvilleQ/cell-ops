@@ -9,3 +9,5 @@ resources:
   - ./referencegrant.yaml
   - ./route.sops.yaml
   - ./redirect.sops.yaml
+  - ./stream.sops.yaml
+  - ./stream-policy.yaml

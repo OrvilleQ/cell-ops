@@ -21,6 +21,8 @@ spec:
           port: 8080
         - protocol: TCP
           port: 8081
+        - protocol: TCP
+          port: 8082
     - from:
         - podSelector:
             matchLabels:
