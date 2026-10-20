@@ -22,7 +22,7 @@ spec:
     ipv6:
       enabled: false
     bpf:
-      masquerade: false
+      masquerade: true
       hostLegacyRouting: true
     socketLB:
       enabled: true
@@ -77,3 +77,7 @@ spec:
             fieldPath: status.hostIP
     prometheus:
       enabled: true
+    egressGateway:
+      enabled: true
+    devices: tailscale0
+    forceDeviceDetection: true
