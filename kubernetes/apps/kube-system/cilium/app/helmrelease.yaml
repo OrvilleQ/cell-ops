@@ -82,3 +82,7 @@ spec:
       enabled: true
     devices: tailscale0
     forceDeviceDetection: true
+    bandwidthManager:
+      enabled: true
+      bbr: true
+      bbrHostNamespaceOnly: false
