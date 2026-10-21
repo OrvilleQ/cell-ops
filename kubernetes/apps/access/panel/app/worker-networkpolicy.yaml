@@ -10,6 +10,16 @@ spec:
     - Ingress
   ingress:
     - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: envoy-gateway-system
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-name: public
+      ports:
+        - protocol: TCP
+          port: 8082
+    - from:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: panel
