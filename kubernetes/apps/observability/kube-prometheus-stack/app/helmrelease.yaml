@@ -163,3 +163,6 @@ spec:
           memory: 32Mi
         limits:
           memory: 128Mi
+    kubelet:
+      serviceMonitor:
+        interval: 60s
