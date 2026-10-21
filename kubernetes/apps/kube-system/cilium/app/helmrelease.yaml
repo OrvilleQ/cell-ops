@@ -23,7 +23,7 @@ spec:
       enabled: false
     bpf:
       masquerade: true
-      hostLegacyRouting: true
+      hostLegacyRouting: false
     socketLB:
       enabled: true
       hostNamespaceOnly: true
