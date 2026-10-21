@@ -18,7 +18,7 @@ spec:
     service:
       name: kube-dns
       clusterIP: "10.43.0.10"
-    replicaCount: 1
+    replicaCount: 2
     priorityClassName: system-cluster-critical
     servers:
       - zones:
@@ -59,14 +59,27 @@ spec:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
             - matchExpressions:
-                - key: node-role.kubernetes.io/control-plane
-                  operator: Exists
+                - key: kubernetes.io/hostname
+                  operator: In
+                  values:
+                    - vie10
+                    - losce
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                k8s-app: kube-dns
+            topologyKey: kubernetes.io/hostname
     tolerations:
       - key: CriticalAddonsOnly
         operator: Exists
       - key: node-role.kubernetes.io/control-plane
         operator: Exists
         effect: NoSchedule
+      - key: dedicated
+        operator: Equal
+        value: edge
+        effect: NoSchedule
     rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+      maxUnavailable: 1
+      maxSurge: 0
