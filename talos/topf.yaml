@@ -12,3 +12,4 @@ nodes:
   - host: losce
     role: worker
     ip: 100.93.138.80
+    schematicId: '@schematic-losce.yaml'
