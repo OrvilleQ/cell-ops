@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: panel-worker
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: panel-worker
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+    - name: stream
+      port: 8082
+      targetPort: stream
+      protocol: TCP

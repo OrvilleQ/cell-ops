@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: panel-worker-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: panel-worker
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: panel
+      ports:
+        - protocol: TCP
+          port: 8080

@@ -13,7 +13,3 @@ spec:
     - name: aux
       port: 8081
       targetPort: aux
-    - name: stream
-      port: 8082
-      targetPort: stream
-      protocol: TCP

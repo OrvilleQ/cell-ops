@@ -9,3 +9,7 @@ resources:
   - ./redirect.sops.yaml
   - ./stream.sops.yaml
   - ./stream-policy.yaml
+  - ./worker-bootstrap.sops.yaml
+  - ./worker-deployment.yaml
+  - ./worker-service.yaml
+  - ./worker-networkpolicy.yaml
