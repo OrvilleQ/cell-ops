@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: portal
-          image: ghcr.io/orvilleq/portal-runtime:0.0.3@sha256:74c3bf320ef13d787b8b8c5f2a123ceb71cef58eee918683e3b9229370ed0ea2
+          image: ghcr.io/orvilleq/portal-runtime:0.0.3@sha256:79f2d2295955f418dd3810a6ce2c18d70eb5fc50aeae56dc9c1809749c5eb337
           env:
             - name: PORTAL_CONFIG
               value: /config/config.json
