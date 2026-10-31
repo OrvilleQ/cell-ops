@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mirotalk
-          image: docker.io/mirotalk/p2p:latest@sha256:f6ec89b41b81e54c6b05a31780b6712959b7db03456eabaad19d703c57ba9718
+          image: docker.io/mirotalk/p2p:latest@sha256:1625d66b42c776cf3447b94ca0739458e6132c5cd4eb103f32d94b6e2613d511
           command:
             - node
             - app/src/server.js
