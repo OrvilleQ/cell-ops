@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postfix
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postfix
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postfix
+    spec:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/hostname: losce
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: edge
+          effect: NoSchedule
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: postfix
+          image: ghcr.io/orvilleq/postfix-runtime:3.10.13-0_plus_deb13u1-r2@sha256:0bbee2b873a0013f2e213458558899ca8dfd0db73bc92e7686ce2ecd9f522f28
+          env:
+            - name: POSTFIX_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postfix-runtime
+                  key: hostname
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          startupProbe:
+            tcpSocket:
+              port: 25
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: 25
+            periodSeconds: 20
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 25
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: queue
+              mountPath: /var/spool/postfix
+              readOnly: false
+            - name: credentials
+              mountPath: /run/secrets/postfix
+              readOnly: true
+      volumes:
+        - name: queue
+          hostPath:
+            path: /var/local/mail/postfix
+            type: DirectoryOrCreate
+        - name: credentials
+          secret:
+            secretName: postfix-runtime
+            defaultMode: 256
+            items:
+              - key: username
+                path: username
+              - key: password
+                path: password
+      enableServiceLinks: false

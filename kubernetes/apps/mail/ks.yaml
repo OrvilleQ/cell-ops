@@ -1,0 +1,127 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mail-certificates
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/mail/certificates
+  targetNamespace: mail
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  wait: false
+  healthChecks:
+    - apiVersion: cert-manager.io/v1
+      kind: Certificate
+      name: mail-web-tls
+      namespace: mail
+  dependsOn:
+    - name: cert-manager-issuers
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mail-secrets
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/mail/secrets
+  targetNamespace: mail
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  wait: false
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mail-stalwart
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/mail/stalwart
+  targetNamespace: mail
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  wait: false
+  dependsOn:
+    - name: mail-secrets
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: stalwart
+      namespace: mail
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mail-postfix
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/mail/postfix
+  targetNamespace: mail
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  wait: false
+  dependsOn:
+    - name: mail-secrets
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: postfix
+      namespace: mail
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: mail-bulwark
+  namespace: flux-system
+spec:
+  interval: 1h
+  timeout: 10m
+  path: ./kubernetes/apps/mail/bulwark
+  targetNamespace: mail
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  wait: false
+  dependsOn:
+    - name: mail-secrets
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: bulwark
+      namespace: mail

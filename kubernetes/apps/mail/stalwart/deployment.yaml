@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stalwart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stalwart
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: stalwart
+        kanidm-ldap-client: "true"
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 90
+      containers:
+        - name: stalwart
+          image: docker.io/stalwartlabs/stalwart:v1.1.0@sha256:f772aa6ef8cd8018969fa491640f1436b0270eb14e2c219b5f37f1a77020837e
+          env:
+            - name: STALWART_RECOVERY_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-runtime
+                  key: recovery-admin
+          startupProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 120
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 2Gi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/stalwart
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: stalwart-runtime
+            items:
+              - key: config.json
+                path: config.json
+  strategy:
+    type: Recreate

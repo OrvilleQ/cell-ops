@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: stalwart-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: stalwart
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: envoy-gateway-system
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-name: public
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 25
+        - protocol: TCP
+          port: 110
+        - protocol: TCP
+          port: 143
+        - protocol: TCP
+          port: 465
+        - protocol: TCP
+          port: 587
+        - protocol: TCP
+          port: 993
+        - protocol: TCP
+          port: 995
+        - protocol: TCP
+          port: 4190
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: bulwark
+      ports:
+        - protocol: TCP
+          port: 8080
