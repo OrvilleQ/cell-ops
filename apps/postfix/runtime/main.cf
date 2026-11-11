@@ -5,6 +5,7 @@ mydestination =
 mynetworks = 127.0.0.0/8
 relayhost =
 smtpd_sasl_type = cyrus
+cyrus_sasl_config_path = /etc/postfix/sasl
 smtpd_sasl_path = smtpd
 smtpd_sasl_auth_enable = yes
 smtpd_sasl_security_options = noanonymous

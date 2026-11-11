@@ -34,7 +34,15 @@ jobs:
         run: |
           set -euo pipefail
           credentials="$(mktemp -d)"
-          trap 'docker rm -f postfix-runtime-test >/dev/null 2>&1 || true; rm -rf "$credentials"' EXIT
+          cleanup() {
+            status=$?
+            if [ "$status" -ne 0 ]; then
+              docker logs postfix-runtime-test >&2 || true
+            fi
+            docker rm -f postfix-runtime-test >/dev/null 2>&1 || true
+            rm -rf "$credentials"
+          }
+          trap cleanup EXIT
           printf 'relay\n' > "$credentials/username"
           printf 'test-password\n' > "$credentials/password"
           docker run -d --name postfix-runtime-test \
@@ -58,12 +66,12 @@ jobs:
               assert code == 554 and b"access denied" in message.lower(), (code, message)
               smtp.rset()
               try:
-                  smtp.login("relay", "incorrect")
-              except smtplib.SMTPAuthenticationError:
-                  pass
+                  smtp.login("relay@relay.example.test", "incorrect")
+              except smtplib.SMTPAuthenticationError as err:
+                  assert err.smtp_code == 535, (err.smtp_code, err.smtp_error)
               else:
                   raise AssertionError("Incorrect SMTP password was accepted")
-              smtp.login("relay", "test-password")
+              smtp.login("relay@relay.example.test", "test-password")
               assert smtp.mail("sender@example.test")[0] == 250
               assert smtp.rcpt("recipient@example.net")[0] == 250
               smtp.rset()
