@@ -19,7 +19,6 @@ spec:
     - name: envoy-gateway-certificate
     - name: kanidm-certificate
     - name: portal-certificate
-    - name: microtalk-certificate
   decryption:
     provider: sops
     secretRef:

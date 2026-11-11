@@ -12,4 +12,3 @@ resources:
   - ./observability
   - ./kanidm
   - ./access
-  - ./microtalk

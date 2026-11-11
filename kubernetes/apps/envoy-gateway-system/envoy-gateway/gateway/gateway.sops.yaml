@@ -43,10 +43,6 @@ spec:
             kind: Secret
             name: portal-tls
             namespace: access
-          - group: ""
-            kind: Secret
-            name: talk-tls
-            namespace: microtalk
     - name: ssh
       protocol: TCP
       port: 22
