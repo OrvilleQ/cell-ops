@@ -1,0 +1,98 @@
+name: Postfix runtime
+on:
+  pull_request:
+    paths: [apps/postfix/runtime/**, .github/workflows/postfix-runtime.yaml]
+  push:
+    branches: [main]
+    paths: [apps/postfix/runtime/**, .github/workflows/postfix-runtime.yaml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: postfix-runtime-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and read installed Debian version
+        run: |
+          set -euo pipefail
+          dir=apps/postfix/runtime
+          docker build --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" -t postfix-runtime:test "$dir"
+          version="$(docker run --rm --entrypoint dpkg-query postfix-runtime:test -W -f='${Version}' postfix)"
+          tag="$("$dir/image-tag.sh" "$version" "$(cat "$dir/REVISION")")"
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/postfix-runtime:$tag" >> "$GITHUB_ENV"
+          echo "Debian Postfix package: $version" >> "$GITHUB_STEP_SUMMARY"
+      - name: Test SMTP authorization without sending mail
+        run: |
+          set -euo pipefail
+          credentials="$(mktemp -d)"
+          trap 'docker rm -f postfix-runtime-test >/dev/null 2>&1 || true; rm -rf "$credentials"' EXIT
+          printf 'relay\n' > "$credentials/username"
+          printf 'test-password\n' > "$credentials/password"
+          docker run -d --name postfix-runtime-test \
+            -p 127.0.0.1:2525:25 -e POSTFIX_HOSTNAME=relay.example.test \
+            --mount "type=bind,src=$credentials,dst=/run/secrets/postfix,readonly" postfix-runtime:test
+          python3 - <<'PY'
+          import smtplib
+          import time
+          for _ in range(30):
+              try:
+                  client = smtplib.SMTP("127.0.0.1", 2525, timeout=2)
+                  break
+              except (OSError, smtplib.SMTPException):
+                  time.sleep(1)
+          else:
+              raise SystemExit("Postfix did not become ready")
+          with client as smtp:
+              smtp.ehlo()
+              assert smtp.mail("sender@example.test")[0] == 250
+              code, message = smtp.rcpt("recipient@example.net")
+              assert code == 554 and b"access denied" in message.lower(), (code, message)
+              smtp.rset()
+              try:
+                  smtp.login("relay", "incorrect")
+              except smtplib.SMTPAuthenticationError:
+                  pass
+              else:
+                  raise AssertionError("Incorrect SMTP password was accepted")
+              smtp.login("relay", "test-password")
+              assert smtp.mail("sender@example.test")[0] == 250
+              assert smtp.rcpt("recipient@example.net")[0] == 250
+              smtp.rset()
+              assert smtp.mail("")[0] == 250
+              assert smtp.rcpt("recipient@example.net")[0] == 250
+              smtp.rset()
+          PY
+      - name: Log in
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish tested image without replacing existing tag
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          set -euo pipefail
+          if result="$(docker manifest inspect "$IMAGE" 2>&1)"; then
+            echo "Tag already exists: $IMAGE. Increase REVISION to publish a rebuild."
+            digest="$(docker buildx imagetools inspect "$IMAGE" --format '{{json .Manifest}}' | jq -er .digest)"
+            echo "${IMAGE}@${digest}" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! grep -qiE 'manifest unknown|no such manifest' <<< "$result"; then
+            printf '%s\n' "$result" >&2
+            exit 1
+          fi
+          docker tag postfix-runtime:test "$IMAGE"
+          docker push "$IMAGE"
+          digest="$(docker buildx imagetools inspect "$IMAGE" --format '{{json .Manifest}}' | jq -er .digest)"
+          echo "${IMAGE}@${digest}" >> "$GITHUB_STEP_SUMMARY"
