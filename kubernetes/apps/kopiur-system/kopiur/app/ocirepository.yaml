@@ -6,4 +6,4 @@ spec:
   interval: 1h
   url: oci://ghcr.io/home-operations/charts/kopiur
   ref:
-    tag: 0.10.16
+    tag: 0.10.21
